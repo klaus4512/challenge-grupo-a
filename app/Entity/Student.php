@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-class Student
+class Student implements \JsonSerializable
 {
     private string $name;
     private CPF $cpf;
@@ -17,6 +17,12 @@ class Student
         $this->cpf = $cpf;
         $this->email = $email;
         $this->ra = $ra;
+    }
+
+
+    public function jsonSerialize(): array
+    {
+        return get_object_vars($this);
     }
 
     public function getName(): string
@@ -48,6 +54,4 @@ class Student
     {
         return $this->ra;
     }
-
-
 }

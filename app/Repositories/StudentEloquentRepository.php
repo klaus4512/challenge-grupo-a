@@ -27,9 +27,9 @@ class StudentEloquentRepository implements StudentRepository
         return \App\Models\Student::all()->toArray();
     }
 
-    public function find(int $id): ?Student
+    public function find(int $ra): ?Student
     {
-        return $this->modelToObject(\App\Models\Student::find($id));
+        return $this->modelToObject(\App\Models\Student::query()->where('ra', $ra)->first());
     }
 
     public function create(Student $student): void
@@ -44,17 +44,28 @@ class StudentEloquentRepository implements StudentRepository
 
     public function update(Student $student): void
     {
-        $studentModel = \App\Models\Student::find($student->getId());
+        $studentModel = \App\Models\Student::query()->where('ra', $student->getRa())->first();
         $studentModel->name = $student->getName();
         $studentModel->email = $student->getEmail()->getAddress();
-        $studentModel->cpf = $student->getCpf()->getNumber();
-        $studentModel->ra = $student->getRa();
         $studentModel->save();
     }
 
-    public function delete(int $id): void
+    public function delete(int $ra): void
     {
-        $studentModel = \App\Models\Student::find($id)->delete();
+        \App\Models\Student::query()->where('ra', $ra)->delete();
     }
+
+    public function search(string $search): array
+    {
+        return \App\Models\Student::query()
+            ->where('name', 'like', "%$search%")
+            ->orWhere('email', 'like', "%$search%")
+            ->orWhere('cpf', 'like', "%$search%")
+            ->orWhere('ra', 'like', "%$search%")
+            ->get()
+            ->toArray();
+    }
+
+
 
 }

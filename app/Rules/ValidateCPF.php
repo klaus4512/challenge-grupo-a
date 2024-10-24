@@ -1,35 +1,24 @@
 <?php
 
-namespace App\Entity;
+namespace App\Rules;
 
-class CPF implements \JsonSerializable
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
+
+class ValidateCPF implements ValidationRule
 {
-    private string $number;
-
-    public function __construct(string $number)
+    /**
+     * Run the validation rule.
+     *
+     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     */
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if ($this->checkCPF($number) === false) {
-            throw new \InvalidArgumentException('Invalid CPF');
+        //
+        if ($this->checkCPF($value) === false) {
+            $fail('Invalid CPF');
         }
-        $this->number = preg_replace("/[^A-Za-z0-9]/", "", $number);
     }
-
-    public function jsonSerialize(): array
-    {
-        return get_object_vars($this);
-    }
-
-    public function __toString():string
-    {
-        return $this->number;
-    }
-
-    public function getNumber(): string
-    {
-        return $this->number;
-    }
-
-
 
     private function checkCPF($cpf):bool
     {
@@ -39,6 +28,7 @@ class CPF implements \JsonSerializable
 
         // Verifica se foi informado todos os digitos corretamente
         if (strlen($cpf) !== 11) {
+
             return false;
         }
 
