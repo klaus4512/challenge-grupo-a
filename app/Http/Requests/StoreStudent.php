@@ -26,7 +26,7 @@ class StoreStudent extends FormRequest
             'name' => 'required|string',
             'cpf' => ['required', new ValidateCPF()],
             'email' => 'required|email',
-            'ra' => 'required'
+            'ra' => 'required|numeric'
         ];
     }
 }
